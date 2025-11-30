@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { ToolType, GenerationConfig } from '../../types';
-import { KimiService } from '../../services/mockBackend';
+import { AIService } from '../../services/mockBackend';
 import { downloadDoc, downloadPDF } from '../../utils/download';
 
 interface RefineToolProps {
@@ -78,7 +79,7 @@ export const RefineTool: React.FC<RefineToolProps> = ({ type, config, onResult, 
     
     try {
       let currentText = '';
-      await KimiService.streamResponse(
+      await AIService.streamResponse(
         `${meta.promptPrefix} "${input}"\n\nConfiguration: ${JSON.stringify(config)}`,
         (chunk) => {
           currentText = chunk;

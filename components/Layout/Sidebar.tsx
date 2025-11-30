@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ToolType, User, SupportedLang } from '../../types';
+import { ToolType, User, SupportedLang, Plan } from '../../types';
 import { getTranslation } from '../../utils/i18n';
 
 interface SidebarProps {
@@ -11,9 +11,10 @@ interface SidebarProps {
   onLogout: () => void;
   uiLang: SupportedLang;
   onLangChange: (lang: SupportedLang) => void;
+  onOpenPricing?: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ activeTool, onNavigate, user, onOpenAuth, onLogout, uiLang, onLangChange }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ activeTool, onNavigate, user, onOpenAuth, onLogout, uiLang, onLangChange, onOpenPricing }) => {
   const t = (key: any) => getTranslation(uiLang, key);
 
   const NavItem = ({ tool, icon, label, badge }: { tool: ToolType, icon: string, label: string, badge?: string }) => (
@@ -100,12 +101,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTool, onNavigate, user, 
       {/* User Footer */}
       <div className="p-4 border-t border-slate-800 bg-slate-950">
         {user ? (
-          <div className="flex items-center gap-3">
-            <img src={user.avatar} alt="User" className="w-9 h-9 rounded-full bg-slate-700" />
-            <div className="flex-1 min-w-0">
-              <div className="text-sm font-medium text-white truncate">{user.name}</div>
-              <div className="text-xs text-indigo-400 cursor-pointer hover:text-indigo-300" onClick={onLogout}>{t('signout')}</div>
+          <div className="flex flex-col gap-3">
+             <div className="flex items-center gap-3">
+              <img src={user.avatar} alt="User" className="w-9 h-9 rounded-full bg-slate-700" />
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-white truncate">{user.name}</div>
+                <div className="text-xs text-indigo-400 cursor-pointer hover:text-indigo-300" onClick={onLogout}>{t('signout')}</div>
+              </div>
             </div>
+            {user.plan !== Plan.ULTRA && (
+              <button 
+                onClick={onOpenPricing} 
+                className="w-full py-1.5 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-bold rounded-lg uppercase tracking-wide hover:shadow-lg transition-all"
+              >
+                <i className="fas fa-crown mr-1"></i> Upgrade
+              </button>
+            )}
           </div>
         ) : (
           <button 

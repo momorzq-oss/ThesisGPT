@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { GenerationConfig, SupportedLang } from '../../types';
-import { KimiService } from '../../services/mockBackend';
+import { AIService } from '../../services/mockBackend';
 import { getTranslation } from '../../utils/i18n';
 
 interface CapstoneWizardProps {
@@ -77,7 +77,7 @@ export const CapstoneWizard: React.FC<CapstoneWizardProps> = ({ onComplete, conf
       : `CAPSTONE PROJECT. Topic: ${topic}. Milestones: ${milestones.join(';')}. Lit: ${litReview}. Method: ${method}. Config: ${JSON.stringify(config)}`;
 
     try {
-      await KimiService.streamResponse(
+      await AIService.streamResponse(
         prompt,
         (chunk) => final = chunk,
         () => {
@@ -210,7 +210,7 @@ export const CapstoneWizard: React.FC<CapstoneWizardProps> = ({ onComplete, conf
                      </div>
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Compiling Capstone Project</h3>
-                  <p className="text-gray-500 max-w-md">Integrating milestones, literature review, and methodology into a cohesive document using Kimi-2.</p>
+                  <p className="text-gray-500 max-w-md">Integrating milestones, literature review, and methodology into a cohesive document using ThesisGPT AI.</p>
                 </div>
               )}
             </div>

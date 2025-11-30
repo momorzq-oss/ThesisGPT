@@ -215,9 +215,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onBack, uiLang = 'en' }) =
                       <td className="p-5">
                           <div className="flex items-center gap-2">
                              <div className="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div className="h-full bg-indigo-500" style={{width: `${Math.min((u.gensUsed / 2000) * 100, 100)}%`}}></div>
+                                <div className="h-full bg-indigo-500" style={{width: `${Math.min((u.wordsUsed / 50000) * 100, 100)}%`}}></div>
                              </div>
-                             <span className="text-gray-600 font-medium">{u.gensUsed}</span>
+                             <span className="text-gray-600 font-medium">{u.wordsUsed}</span>
                           </div>
                       </td>
                       <td className="p-5">
@@ -284,15 +284,17 @@ export const AdminView: React.FC<AdminViewProps> = ({ onBack, uiLang = 'en' }) =
                       />
                       <button className="px-4 py-3 bg-gray-100 rounded-xl text-gray-600 hover:bg-gray-200"><i className="fas fa-eye"></i></button>
                    </div>
+                   <p className="text-xs text-gray-400 mt-2">Required for processing payments.</p>
                 </div>
                 <div>
-                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Kimi API Key</label>
+                   <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Gemini API Key</label>
                    <input 
                       type="password" 
-                      value={settings.kimiKey}
-                      onChange={e => setSettings({...settings, kimiKey: e.target.value})}
+                      value={settings.geminiKey}
+                      onChange={e => setSettings({...settings, geminiKey: e.target.value})}
                       className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-sm bg-gray-50 focus:bg-white transition-all" 
                     />
+                    <p className="text-xs text-gray-400 mt-2">Used for all AI content generation.</p>
                 </div>
                 
                 <div className="bg-indigo-50 p-6 rounded-xl border border-indigo-100">

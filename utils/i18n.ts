@@ -1,4 +1,5 @@
 
+
 import { SupportedLang } from '../types';
 
 export const translations = {
@@ -25,7 +26,16 @@ export const translations = {
     words: "Words",
     lang: "Language",
     undetectable: "Undetectable",
-    current_tool: "Current Tool"
+    current_tool: "Current Tool",
+    mode_step: "Step-by-Step Guide",
+    mode_direct: "Direct Instruction (LLM Mode)",
+    direct_placeholder: "Paste your detailed instructions, rubric, or topic here. Act like you are instructing a human writer...",
+    generate_full: "Generate Full Document",
+    processing: "Processing with Gemini...",
+    admin_login_title: "Admin Access",
+    admin_login_desc: "Default: admin / admin",
+    save_config: "Save Configuration",
+    report_gen: "Generate Sales Report"
   },
   fr: {
     nav_create: "Créer",
@@ -50,7 +60,16 @@ export const translations = {
     words: "Mots",
     lang: "Langue",
     undetectable: "Indétectable",
-    current_tool: "Outil Actuel"
+    current_tool: "Outil Actuel",
+    mode_step: "Guide Étape par Étape",
+    mode_direct: "Instruction Directe (Mode LLM)",
+    direct_placeholder: "Collez vos instructions détaillées, rubrique ou sujet ici...",
+    generate_full: "Générer le Document Complet",
+    processing: "Traitement avec Gemini...",
+    admin_login_title: "Accès Admin",
+    admin_login_desc: "Défaut: admin / admin",
+    save_config: "Enregistrer la Configuration",
+    report_gen: "Générer Rapport des Ventes"
   },
   de: {
     nav_create: "Erstellen",
@@ -75,7 +94,16 @@ export const translations = {
     words: "Wörter",
     lang: "Sprache",
     undetectable: "Nicht erkennbar",
-    current_tool: "Aktuelles Tool"
+    current_tool: "Aktuelles Tool",
+    mode_step: "Schritt-für-Schritt",
+    mode_direct: "Direkte Anweisung (LLM-Modus)",
+    direct_placeholder: "Fügen Sie hier Ihre detaillierten Anweisungen ein...",
+    generate_full: "Vollständiges Dokument generieren",
+    processing: "Verarbeitung mit Gemini...",
+    admin_login_title: "Admin-Zugang",
+    admin_login_desc: "Standard: admin / admin",
+    save_config: "Konfiguration speichern",
+    report_gen: "Verkaufsbericht generieren"
   },
   es: {
     nav_create: "Crear",
@@ -100,7 +128,16 @@ export const translations = {
     words: "Palabras",
     lang: "Idioma",
     undetectable: "Indetectable",
-    current_tool: "Herramienta Actual"
+    current_tool: "Herramienta Actual",
+    mode_step: "Guía Paso a Paso",
+    mode_direct: "Instrucción Directa (Modo LLM)",
+    direct_placeholder: "Pegue sus instrucciones detalladas o rúbrica aquí...",
+    generate_full: "Generar Documento Completo",
+    processing: "Procesando con Gemini...",
+    admin_login_title: "Acceso Admin",
+    admin_login_desc: "Predeterminado: admin / admin",
+    save_config: "Guardar Configuración",
+    report_gen: "Generar Informe de Ventas"
   },
   ar: {
     nav_create: "إنشاء",
@@ -125,7 +162,16 @@ export const translations = {
     words: "كلمات",
     lang: "لغة",
     undetectable: "غير قابل للكشف",
-    current_tool: "الأداة الحالية"
+    current_tool: "الأداة الحالية",
+    mode_step: "دليل خطوة بخطوة",
+    mode_direct: "تعليمات مباشرة (نظام LLM)",
+    direct_placeholder: "الصق تعليماتك التفصيلية هنا...",
+    generate_full: "إنشاء المستند بالكامل",
+    processing: "جار المعالجة بواسطة Gemini...",
+    admin_login_title: "دخول المسؤول",
+    admin_login_desc: "الافتراضي: admin / admin",
+    save_config: "حفظ الإعدادات",
+    report_gen: "إنشاء تقرير المبيعات"
   }
 };
 

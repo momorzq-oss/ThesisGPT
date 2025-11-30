@@ -2,13 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Layout/Sidebar';
 import { AuthModal } from './components/Auth/AuthModal';
+import { PricingModal } from './components/Pricing/PricingModal';
 import { Wizard } from './components/Wizard/Wizard';
 import { CapstoneWizard } from './components/Wizard/CapstoneWizard';
 import { ChatInterface } from './components/Chat/ChatInterface';
 import { Editor } from './components/Editor/Editor';
 import { RefineTool } from './components/Tools/RefineTool';
 import { AdminView } from './components/Admin/AdminView';
-import { AuthService } from './services/mockBackend';
+import { AuthService, PLAN_LIMITS } from './services/mockBackend';
 import { ToolType, User, Plan, GenerationConfig, UserRole, SupportedLang } from './types';
 import { getTranslation } from './utils/i18n';
 
@@ -16,6 +17,7 @@ const App: React.FC = () => {
   const [activeTool, setActiveTool] = useState<ToolType>(ToolType.HOME);
   const [user, setUser] = useState<User | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isPricingOpen, setIsPricingOpen] = useState(false);
   const [editorContent, setEditorContent] = useState('');
   
   // UI Language State
@@ -45,72 +47,80 @@ const App: React.FC = () => {
     setActiveTool(ToolType.HOME);
   };
 
-  const GlobalToolbar = () => (
-    <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6 justify-between shrink-0 sticky top-0 z-20 shadow-sm">
-      <div className="font-medium text-gray-700 flex items-center gap-3">
-        <span className="text-gray-400 uppercase text-xs font-bold tracking-wider">{t('current_tool')}</span>
-        <div className="h-4 w-px bg-gray-300"></div>
-        <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-          {activeTool === ToolType.HOME ? 'Dashboard' : activeTool.replace('_', ' ')}
-        </span>
-      </div>
-      
-      <div className="flex items-center gap-3">
+  const GlobalToolbar = () => {
+    const limits = user ? PLAN_LIMITS[user.plan] : PLAN_LIMITS[Plan.FREE];
+    const wordsUsed = user ? user.wordsUsed : 0;
+    const isApproachingLimit = user && wordsUsed > (limits.words * 0.8);
+
+    return (
+      <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6 justify-between shrink-0 sticky top-0 z-20 shadow-sm">
+        <div className="font-medium text-gray-700 flex items-center gap-3">
+          <span className="text-gray-400 uppercase text-xs font-bold tracking-wider">{t('current_tool')}</span>
+          <div className="h-4 w-px bg-gray-300"></div>
+          <span className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+            {activeTool === ToolType.HOME ? 'Dashboard' : activeTool.replace('_', ' ')}
+          </span>
+        </div>
         
-        {/* Content Settings */}
-        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
-          <i className="fas fa-globe text-gray-400 text-xs"></i>
-          <select 
-            className="bg-transparent text-sm text-gray-600 outline-none cursor-pointer font-medium"
-            value={config.language}
-            onChange={(e) => setConfig({...config, language: e.target.value})}
-          >
-            <option>English (US)</option>
-            <option>Spanish</option>
-            <option>French</option>
-            <option>Arabic</option>
-            <option>German</option>
-            <option>Chinese</option>
-          </select>
-        </div>
-
-        <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
-          <i className="fas fa-ruler text-gray-400 text-xs"></i>
-          <select 
-            className="bg-transparent text-sm text-gray-600 outline-none cursor-pointer font-medium"
-             value={config.words}
-             onChange={(e) => setConfig({...config, words: Number(e.target.value)})}
-          >
-            <option value="500">~500 {t('words')}</option>
-            <option value="1000">~1000 {t('words')}</option>
-            <option value="2500">~2500 {t('words')}</option>
-          </select>
-        </div>
-
-        <button 
-          onClick={() => setConfig(p => ({...p, undetectable: !p.undetectable}))}
-          className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all border ${
-            config.undetectable 
-              ? 'bg-green-50 border-green-200 text-green-700' 
-              : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
-          }`}
-          title="Bypass AI Detectors"
-        >
-          <i className={`fas ${config.undetectable ? 'fa-shield-check' : 'fa-shield-alt'}`}></i>
-          {t('undetectable')}
-        </button>
-
-        {user && (
-          <div className="ml-4 flex flex-col items-end pl-4 border-l border-gray-200">
-             <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide">{t('quota')}</div>
-             <div className={`text-xs font-bold ${user.gensUsed > (user.plan === Plan.FREE ? 8 : 450) ? 'text-orange-500' : 'text-gray-700'}`}>
-                {user.gensUsed} / {user.plan === Plan.FREE ? 10 : user.plan === Plan.STARTER ? 500 : 2000}
-             </div>
+        <div className="flex items-center gap-3">
+          
+          {/* Content Settings */}
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+            <i className="fas fa-globe text-gray-400 text-xs"></i>
+            <select 
+              className="bg-transparent text-sm text-gray-600 outline-none cursor-pointer font-medium"
+              value={config.language}
+              onChange={(e) => setConfig({...config, language: e.target.value})}
+            >
+              <option>English (US)</option>
+              <option>Spanish</option>
+              <option>French</option>
+              <option>Arabic</option>
+              <option>German</option>
+              <option>Chinese</option>
+            </select>
           </div>
-        )}
+
+          <div className="flex items-center gap-2 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors">
+            <i className="fas fa-ruler text-gray-400 text-xs"></i>
+            <select 
+              className="bg-transparent text-sm text-gray-600 outline-none cursor-pointer font-medium"
+               value={config.words}
+               onChange={(e) => setConfig({...config, words: Number(e.target.value)})}
+            >
+              <option value="500">~500 {t('words')}</option>
+              <option value="1000">~1000 {t('words')}</option>
+              <option value="2500">~2500 {t('words')}</option>
+            </select>
+          </div>
+
+          <button 
+            onClick={() => setConfig(p => ({...p, undetectable: !p.undetectable}))}
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-bold transition-all border ${
+              config.undetectable 
+                ? 'bg-green-50 border-green-200 text-green-700' 
+                : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
+            }`}
+            title="Bypass AI Detectors"
+          >
+            <i className={`fas ${config.undetectable ? 'fa-shield-check' : 'fa-shield-alt'}`}></i>
+            {t('undetectable')}
+          </button>
+
+          {user && (
+            <div className="ml-4 flex flex-col items-end pl-4 border-l border-gray-200" onClick={() => setIsPricingOpen(true)}>
+               <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wide cursor-pointer hover:text-indigo-600">
+                  WORD QUOTA <i className="fas fa-chevron-right text-[8px] ml-1"></i>
+               </div>
+               <div className={`text-xs font-bold ${isApproachingLimit ? 'text-orange-500' : 'text-gray-700'}`}>
+                  {user.wordsUsed.toLocaleString()} / {limits.words >= 99999999 ? '∞' : limits.words.toLocaleString()}
+               </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const isRefineTool = [
     ToolType.REWRITER, 
@@ -138,7 +148,7 @@ const App: React.FC = () => {
             <div className="relative z-10">
                 <h1 className="text-4xl font-extrabold mb-4 tracking-tight">{t('welcome')}, {user ? user.name : 'Guest'}</h1>
                 <p className="text-indigo-100 text-lg max-w-xl font-medium leading-relaxed">
-                Your advanced academic writing suite is ready. Select a tool to start generating thesis content, essays, or research papers with Kimi-2 AI.
+                Your advanced academic writing suite is ready. Select a tool to start generating thesis content, essays, or research papers with ThesisGPT AI (Powered by Gemini).
                 </p>
                 {!user && (
                 <button onClick={() => setIsAuthOpen(true)} className="mt-8 bg-white text-indigo-700 px-8 py-3 rounded-xl font-bold hover:bg-indigo-50 transition-all shadow-lg">
@@ -166,6 +176,20 @@ const App: React.FC = () => {
               <h3 className="font-bold text-gray-800 text-xl mb-2 group-hover:text-purple-600 transition-colors">{t('tool_capstone')}</h3>
               <p className="text-gray-500 text-sm leading-relaxed">Manage complex projects, generate milestones, literature reviews, and methodologies for thesis work.</p>
             </div>
+          </div>
+
+          {/* Missing Features / Utilities Area */}
+          <h2 className="text-xl font-bold text-gray-800 mb-6 px-2 flex items-center gap-2">
+            <i className="fas fa-toolbox text-gray-500"></i> Utilities
+          </h2>
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm mb-12 flex items-center gap-6">
+              <div className="flex-1">
+                 <h3 className="font-bold text-gray-800">PDF Import & Analysis</h3>
+                 <p className="text-sm text-gray-500 mt-1">Upload reference materials (PDF) to extract citations or generate summaries.</p>
+              </div>
+              <button className="bg-gray-50 hover:bg-gray-100 text-gray-700 border border-gray-200 px-4 py-2 rounded-xl font-bold transition-all flex items-center gap-2">
+                <i className="fas fa-file-upload"></i> Upload PDF
+              </button>
           </div>
         </div>
       );
@@ -212,7 +236,7 @@ const App: React.FC = () => {
               </div>
               <h3 className="font-bold text-gray-800 mb-2 text-xl">Ready to Generate</h3>
               <p className="text-gray-500 max-w-md mb-8">
-                Enter your topic below to start generating specific academic content using the Kimi-2 model.
+                Enter your topic below to start generating specific academic content using the ThesisGPT model.
               </p>
               <div className="flex w-full max-w-lg gap-3">
                 <input 
@@ -240,6 +264,7 @@ const App: React.FC = () => {
         onLogout={() => { AuthService.logout(); setUser(null); }}
         uiLang={uiLang}
         onLangChange={setUiLang}
+        onOpenPricing={() => setIsPricingOpen(true)}
       />
       
       <div className="ml-64 rtl:ml-0 rtl:mr-64 flex-1 flex flex-col h-screen overflow-hidden">
@@ -254,6 +279,11 @@ const App: React.FC = () => {
         isOpen={isAuthOpen} 
         onClose={() => setIsAuthOpen(false)}
         onLogin={(u) => setUser(u)}
+      />
+
+      <PricingModal
+        isOpen={isPricingOpen}
+        onClose={() => setIsPricingOpen(false)}
       />
     </div>
   );

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { GenerationConfig, SupportedLang } from '../../types';
-import { KimiService } from '../../services/mockBackend';
+import { AIService } from '../../services/mockBackend';
 import { getTranslation } from '../../utils/i18n';
 
 interface WizardProps {
@@ -65,7 +65,7 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, config, uiLang = 'en
       : `Write an essay about ${selectedTitle} based on outline: ${outline.join(', ')}. Config: ${JSON.stringify(config)}`;
 
     try {
-      await KimiService.streamResponse(
+      await AIService.streamResponse(
         systemPrompt,
         (chunk) => {
           finalText = chunk; 
@@ -246,7 +246,7 @@ export const Wizard: React.FC<WizardProps> = ({ onComplete, config, uiLang = 'en
                   </div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Writing your essay...</h3>
                   <p className="text-gray-500 max-w-sm">
-                      Using <strong>Kimi-2 Turbo</strong> (256k context) to generate a unique, plagiarism-free essay based on your outline.
+                      Using <strong>ThesisGPT AI</strong> (256k context) to generate a unique, plagiarism-free essay based on your outline.
                   </p>
                   {config.undetectable && (
                     <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 text-green-700 rounded-full text-sm font-bold animate-bounce">

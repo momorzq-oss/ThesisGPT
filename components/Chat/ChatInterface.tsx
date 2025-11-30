@@ -1,6 +1,7 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatMessage } from '../../types';
-import { KimiService } from '../../services/mockBackend';
+import { AIService } from '../../services/mockBackend';
 import { downloadDoc, downloadPDF } from '../../utils/download';
 
 interface ChatProps {
@@ -13,6 +14,7 @@ export const ChatInterface: React.FC<ChatProps> = ({ onClose }) => {
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export const ChatInterface: React.FC<ChatProps> = ({ onClose }) => {
 
     try {
       let accumulatedText = "";
-      await KimiService.streamResponse(
+      await AIService.streamResponse(
         input,
         (chunk) => {
           accumulatedText = chunk;
@@ -52,6 +54,12 @@ export const ChatInterface: React.FC<ChatProps> = ({ onClose }) => {
       alert("Quota exceeded or error.");
       setIsTyping(false);
     }
+  };
+
+  const copyMessage = (text: string, id: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
 
   const exportChat = () => {
@@ -100,11 +108,11 @@ export const ChatInterface: React.FC<ChatProps> = ({ onClose }) => {
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50">
         {messages.map((msg) => (
-          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+          <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in group`}>
             {msg.role === 'assistant' && (
                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs mr-3 mt-1 shrink-0 border border-indigo-200">AI</div>
             )}
-            <div className={`max-w-[80%] rounded-2xl p-5 shadow-sm ${
+            <div className={`max-w-[80%] rounded-2xl p-5 shadow-sm relative ${
                 msg.role === 'user' 
                 ? 'bg-indigo-600 text-white rounded-tr-none' 
                 : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
@@ -121,6 +129,16 @@ export const ChatInterface: React.FC<ChatProps> = ({ onClose }) => {
                     ))}
                   </div>
                 </div>
+              )}
+              {/* Message Copy Button */}
+              {msg.role === 'assistant' && !msg.isStreaming && (
+                <button 
+                  onClick={() => copyMessage(msg.content, msg.id)}
+                  className={`absolute -bottom-6 left-0 text-xs px-2 py-1 rounded hover:bg-gray-200 transition-all flex items-center gap-1 ${copiedId === msg.id ? 'text-green-600' : 'text-gray-400 opacity-0 group-hover:opacity-100'}`}
+                >
+                  <i className={`fas ${copiedId === msg.id ? 'fa-check' : 'fa-copy'}`}></i>
+                  {copiedId === msg.id ? 'Copied' : 'Copy'}
+                </button>
               )}
             </div>
             {msg.role === 'user' && (

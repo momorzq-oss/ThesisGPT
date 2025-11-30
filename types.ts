@@ -2,8 +2,9 @@
 
 export enum Plan {
   FREE = "FREE",
-  STARTER = "STARTER",
-  PRO = "PRO"
+  BASIC = "BASIC",
+  PRO = "PRO",
+  ULTRA = "ULTRA"
 }
 
 export enum UserRole {
@@ -17,7 +18,8 @@ export interface User {
   name: string;
   plan: Plan;
   role: UserRole;
-  gensUsed: number;
+  wordsUsed: number;
+  undetectableWordsUsed: number;
   avatar?: string;
 }
 
@@ -59,7 +61,7 @@ export type SupportedLang = 'en' | 'fr' | 'de' | 'es' | 'ar';
 
 export interface AdminConfig {
   stripeKey: string;
-  kimiKey: string;
+  geminiKey: string;
   adminUser: string;
   adminPass: string;
 }
