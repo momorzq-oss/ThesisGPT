@@ -1,0 +1,29 @@
+export const downloadDoc = (content: string, filename: string) => {
+  // Simple HTML wrapper to ensure line breaks are preserved in Word
+  const htmlContent = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head><meta charset='utf-8'><title>${filename}</title></head>
+    <body>
+      <div style="font-family: 'Times New Roman', serif; font-size: 12pt; line-height: 1.5; white-space: pre-wrap;">
+        ${content}
+      </div>
+    </body>
+    </html>
+  `;
+  
+  const blob = new Blob([htmlContent], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${filename}.doc`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+export const downloadPDF = () => {
+  // In a browser environment without heavy libraries like jsPDF, 
+  // the most reliable way to generate a PDF is invoking the system print dialog.
+  window.print();
+};

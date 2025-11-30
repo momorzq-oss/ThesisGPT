@@ -1,0 +1,5 @@
+{
+  "name": "ThesisGPT Unified",
+  "description": "A merged dashboard combining Hix.ai style essay generation with ThesisAI tools, featuring simulated Kimi-2 integration, quota management, and an admin panel.",
+  "requestFramePermissions": []
+}
